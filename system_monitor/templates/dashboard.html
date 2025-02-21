@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Resource Monitoring</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* 60-30-10 Color Rule */
+        :root {
+            --primary-color: #1e1e2f; /* 60% Background */
+            --secondary-color: #2a2a3c; /* 30% Card Elements */
+            --accent-color: #00d4ff; /* 10% Accent */
+            --text-light: #ffffff;
+            --text-muted: #b0b0c3;
+        }
+
+        .light-mode {
+            --primary-color: #f8f9fa;
+            --secondary-color: #e9ecef;
+            --accent-color: #007bff;
+            --text-light: #212529;
+            --text-muted: #6c757d;
+        }
+
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        /* Styled Cards */
+        .card {
+            background-color: var(--secondary-color);
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h5 {
+            color: var(--text-muted);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--secondary-color);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        canvas {
+            max-height: 350px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+<div class="container">
+    <h2 class="title">System Resource Monitoring</h2>
+
+    <!-- Stats Cards -->
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card">
+                <h5>CPU Usage</h5>
+                <h3 id="cpu_usage" class="text-danger">0%</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h5>Memory Usage</h5>
+                <h3 id="memory_usage" class="text-primary">0%</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h5>Disk Usage</h5>
+                <h3 id="disk_usage" class="text-success">0%</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h5>Network Usage</h5>
+                <h3 id="network_usage" class="text-warning">0 MB</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+        <canvas id="resourceChart"></canvas>
+    </div>
+</div>
+
+<script>
+    // Pass the base URL from Django to JavaScript
+    const baseUrl = "{% url 'dashboard' %}".replace("dashboard/", "");
+</script>
+
+<script>
+    // Theme Toggle Functionality
+    function toggleTheme() {
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle');
+        body.classList.toggle("light-mode");
+
+        // Update button emoji and animate
+        if (body.classList.contains("light-mode")) {
+            themeToggle.textContent = "☀️";
+            gsap.fromTo(themeToggle, {rotation: 0}, {rotation: 360, duration: 0.5});
+        } else {
+            themeToggle.textContent = "🌙";
+            gsap.fromTo(themeToggle, {rotation: 360}, {rotation: 0, duration: 0.5});
+        }
+
+        // Save theme preference to localStorage
+        const isLightMode = body.classList.contains("light-mode");
+        localStorage.setItem("theme", isLightMode ? "light" : "dark");
+    }
+
+    // Check saved theme preference on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const savedTheme = localStorage.getItem("theme");
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle');
+
+        if (savedTheme === "light") {
+            body.classList.add("light-mode");
+            themeToggle.textContent = "☀️";
+        } else {
+            body.classList.remove("light-mode");
+            themeToggle.textContent = "🌙";
+        }
+    });
+</script>
+
+<script>
+    async function fetchMetrics() {
+        try {
+            const response = await fetch(`${baseUrl}metrics/realtime/`);
+            const data = await response.json();
+
+            // Update values with smooth animation
+            gsap.to("#cpu_usage", {textContent: `${data.cpu_usage}%`, duration: 0.5, ease: "power2.out"});
+            gsap.to("#memory_usage", {textContent: `${data.memory_usage}%`, duration: 0.5, ease: "power2.out"});
+            gsap.to("#disk_usage", {textContent: `${data.disk_usage}%`, duration: 0.5, ease: "power2.out"});
+            gsap.to("#network_usage", {
+                textContent: `${(data.network_sent + data.network_received).toFixed(2)} MB`,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+
+            return data;
+        } catch (error) {
+            console.error("Error fetching metrics:", error);
+            return {cpu_usage: 0, memory_usage: 0, disk_usage: 0, network_sent: 0, network_received: 0};
+        }
+    }
+
+    async function updateChart(chart) {
+        const data = await fetchMetrics();
+
+        const currentTime = new Date().toLocaleTimeString();
+        chart.data.labels.push(currentTime);
+        chart.data.datasets[0].data.push(data.cpu_usage);
+        chart.data.datasets[1].data.push(data.memory_usage);
+        chart.data.datasets[2].data.push(data.network_sent + data.network_received);
+
+        if (chart.data.labels.length > 10) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+            chart.data.datasets[1].data.shift();
+            chart.data.datasets[2].data.shift();
+        }
+
+        chart.update();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        gsap.from(".title", {opacity: 0, y: -20, duration: 1, ease: "bounce.out"});
+
+        const ctx = document.getElementById("resourceChart").getContext("2d");
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [
+                    {label: "CPU Usage (%)", data: [], borderColor: "red", fill: false},
+                    {label: "Memory Usage (%)", data: [], borderColor: "blue", fill: false},
+                    {label: "Network Usage (MB)", data: [], borderColor: "orange", fill: false}
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {y: {beginAtZero: true, max: 100}}
+            }
+        });
+
+        setInterval(() => updateChart(chart), 3000);
+    });
+</script>
+
+</body>
+</html>
