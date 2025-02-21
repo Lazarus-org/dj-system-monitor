@@ -76,7 +76,9 @@ def check_system_monitor_settings(app_configs: Any, **kwargs: Any) -> List[Error
     )
     errors.extend(
         validate_optional_path_setting(
-            config.get_setting(f"{config.prefix}API_RESOURCE_USAGE_SERIALIZER_CLASS", None),
+            config.get_setting(
+                f"{config.prefix}API_RESOURCE_USAGE_SERIALIZER_CLASS", None
+            ),
             f"{config.prefix}API_RESOURCE_USAGE_SERIALIZER_CLASS",
         )
     )
