@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime
+from datetime import date, datetime, timezone
 
 from django.core.management.base import BaseCommand
 from django.utils.timezone import get_current_timezone, make_aware, now
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                     to_time_local = make_aware(naive_to_time, local_timezone)
 
                     # Convert local time to UTC
-                    to_time_utc = to_time_local.astimezone(UTC)
+                    to_time_utc = to_time_local.astimezone(timezone.utc)
 
                     if to_time_utc < now():
                         self.stderr.write(
