@@ -15,7 +15,7 @@ authors = [
   { name = "ARYAN-NIKNEZHAD", email = "aryan513966@gmail.com" },
   { name = "MEHRSHAD-MIRSHEKARY", email = "mehrshad_mirshekary@email.com" },
 ]
-
+requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Web Environment",
