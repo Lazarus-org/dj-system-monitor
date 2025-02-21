@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 
 
 class ResourceUsage(models.Model):

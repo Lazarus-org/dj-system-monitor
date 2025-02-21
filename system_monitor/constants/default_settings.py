@@ -27,12 +27,10 @@ class DefaultPaginationAndFilteringSettings:
             "memory_usage",
             "disk_usage",
             "total_network_sent",
-            "total_network_received"
+            "total_network_received",
         ]
     )
-    search_fields: List[str] = field(
-        default_factory=lambda: ["id"]
-    )
+    search_fields: List[str] = field(default_factory=lambda: ["id"])
 
 
 # pylint: disable=too-many-instance-attributes

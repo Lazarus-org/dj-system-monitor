@@ -1,21 +1,25 @@
 import logging
-import psutil
 import time
 from datetime import datetime
-from typing import Dict, Tuple, Optional
-from django.utils import timezone
+from typing import Dict, Optional, Tuple
 
+import psutil
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
 class SystemMetricsCalculator:
-    """Class for calculating live and time-based system metrics like CPU, memory, disk, and network usage."""
+    """Class for calculating live and time-based system metrics like CPU,
+    memory, disk, and network usage."""
 
     def __init__(self):
-        """
-        Initialize the calculator with previous network and disk I/O counters and the previous time.
-        This helps calculate changes between subsequent metric collections.
+        """Initialize the calculator with previous network and disk I/O
+        counters and the previous time.
+
+        This helps calculate changes between subsequent metric
+        collections.
+
         """
         self.previous_net_io: psutil._common.snetio = psutil.net_io_counters()
         self.previous_disk_io: psutil._common.sdiskio = psutil.disk_io_counters()
@@ -23,22 +27,22 @@ class SystemMetricsCalculator:
 
     @staticmethod
     def _bytes_to_mb(bytes_value: int) -> float:
-        """
-        Convert bytes to megabytes.
+        """Convert bytes to megabytes.
 
         Args:
             bytes_value (int): The value in bytes to be converted.
 
         Returns:
             float: The equivalent value in megabytes, rounded to two decimal places.
+
         """
         return round(bytes_value / (1024**2), 2)
 
     def _calculate_network_metrics(
         self, current_net_io: psutil._common.snetio, time_diff: float
     ) -> Tuple[float, float]:
-        """
-        Calculate network sent and received speeds over the given time interval.
+        """Calculate network sent and received speeds over the given time
+        interval.
 
         Args:
             current_net_io (psutil._common.snetio): Current network I/O counters.
@@ -46,6 +50,7 @@ class SystemMetricsCalculator:
 
         Returns:
             Tuple[float, float]: The network sent and received speeds in MB/s.
+
         """
         network_sent = (
             self._bytes_to_mb(
@@ -64,8 +69,7 @@ class SystemMetricsCalculator:
     def _calculate_disk_metrics(
         self, current_disk_io: psutil._common.sdiskio, time_diff: float
     ) -> Tuple[float, float, Optional[float]]:
-        """
-        Calculate disk read and write speeds and disk active time.
+        """Calculate disk read and write speeds and disk active time.
 
         Args:
             current_disk_io (psutil._common.sdiskio): Current disk I/O counters.
@@ -73,6 +77,7 @@ class SystemMetricsCalculator:
 
         Returns:
             Tuple[float, float, Optional[float]]: Disk read and write speeds in MB/s, and disk active time as a percentage.
+
         """
         disk_read_speed = (
             self._bytes_to_mb(
@@ -104,21 +109,21 @@ class SystemMetricsCalculator:
         current_disk_io: psutil._common.sdiskio,
         current_time: float,
     ) -> None:
-        """
-        Update the previous network, disk I/O counters, and time for the next calculation.
+        """Update the previous network, disk I/O counters, and time for the
+        next calculation.
 
         Args:
             current_net_io (psutil._common.snetio): Current network I/O counters.
             current_disk_io (psutil._common.sdiskio): Current disk I/O counters.
             current_time (float): The current time in seconds since the epoch.
+
         """
         self.previous_net_io = current_net_io
         self.previous_disk_io = current_disk_io
         self.previous_time = current_time
 
     def live_metrics(self) -> Dict[str, Optional[float]]:
-        """
-        Calculate and return live system metrics.
+        """Calculate and return live system metrics.
 
         Returns:
             Dict[str, Optional[float]]: A dictionary containing the following metrics:
@@ -130,6 +135,7 @@ class SystemMetricsCalculator:
                 - "disk_read_speed": Disk read speed in MB/s.
                 - "disk_write_speed": Disk write speed in MB/s.
                 - "disk_active_time": Disk active time as a percentage.
+
         """
         current_net_io = psutil.net_io_counters()
         current_disk_io = psutil.disk_io_counters()
@@ -159,8 +165,8 @@ class SystemMetricsCalculator:
     def calculate_metrics_over_time(
         self, to_time: datetime, interval_minutes: int = 1
     ) -> Dict[str, float]:
-        """
-        Calculate metrics over a specified time range and compute averages or totals.
+        """Calculate metrics over a specified time range and compute averages
+        or totals.
 
         Args:
             to_time (datetime): End time for the metrics collection.
@@ -176,6 +182,7 @@ class SystemMetricsCalculator:
                 - "total_network_received": Total network data received in MB.
                 - "total_disk_read": Total disk data read in MB.
                 - "total_disk_write": Total disk data written in MB.
+
         """
         to_time = (
             timezone.make_aware(to_time) if not timezone.is_aware(to_time) else to_time

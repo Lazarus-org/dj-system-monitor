@@ -1,6 +1,8 @@
-from datetime import datetime, UTC, date
+from datetime import UTC, date, datetime
+
 from django.core.management.base import BaseCommand
-from django.utils.timezone import now, make_aware, get_current_timezone
+from django.utils.timezone import get_current_timezone, make_aware, now
+
 from system_monitor.calculator import SystemMetricsCalculator
 from system_monitor.models import ResourceUsage
 
@@ -36,8 +38,7 @@ class Command(BaseCommand):
                     user_time = datetime.strptime(to_time_str, "%H:%M:%S").time()
 
                     # Combine with today's date and make it aware of the local timezone
-                    current_date = date.today()
-                    naive_to_time = datetime.combine(current_date, user_time)
+                    naive_to_time = datetime.combine(date.today(), user_time)
                     local_timezone = get_current_timezone()
                     to_time_local = make_aware(naive_to_time, local_timezone)
 
@@ -46,9 +47,7 @@ class Command(BaseCommand):
 
                     if to_time_utc < now():
                         self.stderr.write(
-                            self.style.ERROR(
-                                "The --until must be in the future time."
-                            )
+                            self.style.ERROR("The --until must be in the future time.")
                         )
                         return
 
@@ -58,7 +57,9 @@ class Command(BaseCommand):
                         interval_minutes = max(time_difference / 60, 0.1)
                 except ValueError:
                     self.stderr.write(
-                        self.style.ERROR("Invalid date format for --until. Use 'HH:MM:SS'.")
+                        self.style.ERROR(
+                            "Invalid date format for --until. Use 'HH:MM:SS'."
+                        )
                     )
                     return
         else:
@@ -89,5 +90,5 @@ class Command(BaseCommand):
                 self.style.SUCCESS("Resource usage metrics successfully recorded.")
             )
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=W0718
             self.stderr.write(self.style.ERROR(f"An error occurred: {str(e)}"))
