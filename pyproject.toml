@@ -36,6 +36,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[tool.poetry]
 packages = [
   { include = "system_monitor" },
 ]
