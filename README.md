@@ -408,46 +408,7 @@ The dashboard provides a real-time monitoring interface for system resource usag
 - The dashboard uses short polling to fetch updated metrics every few seconds.
 - This ensures up-to-date information without overloading the server.
 
-
-# Settings
-
-This section outlines the available settings for configuring the `dj-system-monitor` package. You can customize these
-settings in your Django project's `settings.py` file to tailor the behavior of the system monitor to your
-needs.
-
-## Example Settings
-
-Below is an example configuration with default values:
-
-```python
-
-SYSTEM_MONITOR_ADMIN_SITE_CLASS = None
-SYSTEM_MONITOR_API_RESOURCE_USAGE_SERIALIZER_CLASS = None
-SYSTEM_MONITOR_API_ALLOW_LIST = True
-SYSTEM_MONITOR_API_ALLOW_RETRIEVE = False
-SYSTEM_MONITOR_AUTHENTICATED_USER_THROTTLE_RATE = "30/minute"
-SYSTEM_MONITOR_STAFF_USER_THROTTLE_RATE = "100/minute"
-SYSTEM_MONITOR_API_THROTTLE_CLASS = (
-    "system_monitor.api.throttlings.role_base_throttle.RoleBasedUserRateThrottle"
-)
-SYSTEM_MONITOR_API_PAGINATION_CLASS = "system_monitor.api.paginations.limit_offset_pagination.DefaultLimitOffSetPagination"
-SYSTEM_MONITOR_API_EXTRA_PERMISSION_CLASS = None
-SYSTEM_MONITOR_API_PARSER_CLASSES = [
-    "rest_framework.parsers.JSONParser",
-    "rest_framework.parsers.MultiPartParser",
-    "rest_framework.parsers.FormParser",
-]
-SYSTEM_MONITOR_API_ORDERING_FIELDS = [
-  "id",
-  "to_time",
-  "cpu_usage",
-  "memory_usage",
-  "disk_usage",
-  "total_network_sent",
-  "total_network_received",
-]
-SYSTEM_MONITOR_API_SEARCH_FIELDS = ["id"]
-```
+---
 
 ## collect_metrics Command
 
@@ -496,6 +457,46 @@ To schedule the command to run every day to collect the resource usages between 
 this will run the command every day at 15:00 , and collect the metrics every 5 minute until 21:30, and saves the average to the database.
 
 ----
+
+# Settings
+
+This section outlines the available settings for configuring the `dj-system-monitor` package. You can customize these
+settings in your Django project's `settings.py` file to tailor the behavior of the system monitor to your
+needs.
+
+## Example Settings
+
+Below is an example configuration with default values:
+
+```python
+
+SYSTEM_MONITOR_ADMIN_SITE_CLASS = None
+SYSTEM_MONITOR_API_RESOURCE_USAGE_SERIALIZER_CLASS = None
+SYSTEM_MONITOR_API_ALLOW_LIST = True
+SYSTEM_MONITOR_API_ALLOW_RETRIEVE = False
+SYSTEM_MONITOR_AUTHENTICATED_USER_THROTTLE_RATE = "30/minute"
+SYSTEM_MONITOR_STAFF_USER_THROTTLE_RATE = "100/minute"
+SYSTEM_MONITOR_API_THROTTLE_CLASS = (
+    "system_monitor.api.throttlings.role_base_throttle.RoleBasedUserRateThrottle"
+)
+SYSTEM_MONITOR_API_PAGINATION_CLASS = "system_monitor.api.paginations.limit_offset_pagination.DefaultLimitOffSetPagination"
+SYSTEM_MONITOR_API_EXTRA_PERMISSION_CLASS = None
+SYSTEM_MONITOR_API_PARSER_CLASSES = [
+    "rest_framework.parsers.JSONParser",
+    "rest_framework.parsers.MultiPartParser",
+    "rest_framework.parsers.FormParser",
+]
+SYSTEM_MONITOR_API_ORDERING_FIELDS = [
+  "id",
+  "to_time",
+  "cpu_usage",
+  "memory_usage",
+  "disk_usage",
+  "total_network_sent",
+  "total_network_received",
+]
+SYSTEM_MONITOR_API_SEARCH_FIELDS = ["id"]
+```
 
 ## Settings Overview
 
