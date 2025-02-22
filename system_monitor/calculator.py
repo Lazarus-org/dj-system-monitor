@@ -188,7 +188,7 @@ class SystemMetricsCalculator:
             timezone.make_aware(to_time) if not timezone.is_aware(to_time) else to_time
         )
         logger.info(
-            "Starting metrics calculation until %s with an interval of %d minutes.",
+            "Starting metrics calculation until %s with an interval of %s minutes.",
             to_time,
             interval_minutes,
         )
