@@ -46,6 +46,9 @@ packages = [
 "Changelog" = "https://github.com/lazarus-org/dj-system-monitor/blob/main/CHANGELOG.md"
 "Issues" = "https://github.com/lazarus-org/dj-system-monitor/issues"
 
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.9"
+
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
 django = [
@@ -72,7 +75,6 @@ django-stubs = "^5.0.4"
 docformatter = "^1.7.5"
 codecov = "^2.1.13"
 python-semantic-release = "^9.8.8"
-poetry-plugin-export = "^1.9.0"
 
 [tool.black]
 line-length = 88
