@@ -67,10 +67,7 @@ class TestCheckSystemMonitorSettings:
 
         # Expect 2 errors for invalid boolean values
         assert len(errors) == 2
-        assert (
-            errors[0].id
-            == f"system_monitor.E001_{mock_config.prefix}API_ALLOW_LIST"
-        )
+        assert errors[0].id == f"system_monitor.E001_{mock_config.prefix}API_ALLOW_LIST"
         assert (
             errors[1].id
             == f"system_monitor.E001_{mock_config.prefix}API_ALLOW_RETRIEVE"
@@ -107,8 +104,7 @@ class TestCheckSystemMonitorSettings:
             == f"system_monitor.E003_{mock_config.prefix}API_ORDERING_FIELDS"
         )
         assert (
-            errors[1].id
-            == f"system_monitor.E004_{mock_config.prefix}API_SEARCH_FIELDS"
+            errors[1].id == f"system_monitor.E004_{mock_config.prefix}API_SEARCH_FIELDS"
         )
 
     @patch("system_monitor.settings.checks.config")
@@ -190,6 +186,5 @@ class TestCheckSystemMonitorSettings:
             == f"system_monitor.E010_{mock_config.prefix}API_EXTRA_PERMISSION_CLASS"
         )
         assert (
-            errors[5].id
-            == f"system_monitor.E010_{mock_config.prefix}ADMIN_SITE_CLASS"
+            errors[5].id == f"system_monitor.E010_{mock_config.prefix}ADMIN_SITE_CLASS"
         )

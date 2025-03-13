@@ -191,6 +191,7 @@ markers = [
   "settings_checks: Marks tests for settings validation, ensuring that required settings are correctly configured.",
   "validators: Marks tests for custom validators used throughout the project.",
   "config_validators: Marks tests for configuration validators that validate the config values in project settings.",
+  "calculator: Marks tests for metrics calculator class.",
 ]
 
 norecursedirs = [

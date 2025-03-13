@@ -52,6 +52,12 @@ class SystemMetricsCalculator:
             Tuple[float, float]: The network sent and received speeds in MB/s.
 
         """
+        if time_diff <= 0:
+            logger.warning(
+                "Time difference is zero or negative; returning 0 for network metrics."
+            )
+            return 0.0, 0.0
+
         network_sent = (
             self._bytes_to_mb(
                 current_net_io.bytes_sent - self.previous_net_io.bytes_sent
@@ -79,6 +85,12 @@ class SystemMetricsCalculator:
             Tuple[float, float, Optional[float]]: Disk read and write speeds in MB/s, and disk active time as a percentage.
 
         """
+        if time_diff <= 0:
+            logger.warning(
+                "Time difference is zero or negative; returning 0 for disk metrics."
+            )
+            return 0.0, 0.0, None
+
         disk_read_speed = (
             self._bytes_to_mb(
                 current_disk_io.read_bytes - self.previous_disk_io.read_bytes

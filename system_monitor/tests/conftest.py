@@ -10,4 +10,5 @@ from system_monitor.tests.fixtures import (
     api_client,
     resource_usage_admin,
     resource_usage,
+    calculator,
 )
