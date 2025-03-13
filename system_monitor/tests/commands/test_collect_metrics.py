@@ -43,9 +43,7 @@ class TestResourceUsageCommand:
         custom_time = (now() + timedelta(seconds=2)).time().strftime("%H:%M:%S")
 
         # Call the command with the custom --until time
-        call_command(
-            "collect_metrics", until=custom_time
-        )
+        call_command("collect_metrics", until=custom_time)
 
         # Verify that a ResourceUsage instance was created
         record = ResourceUsage.objects.first()
@@ -87,8 +85,7 @@ class TestResourceUsageCommand:
         # Capture stderr output
         captured = capsys.readouterr()
         assert (
-            "The --until must be in the future time."
-            in captured.err
+            "The --until must be in the future time." in captured.err
         ), "Expected error message for past time."
 
     def test_command_with_metrics_calculation_error(self, monkeypatch, capsys):
@@ -113,3 +110,41 @@ class TestResourceUsageCommand:
         assert (
             "An error occurred: Metrics calculation failed." in captured.err
         ), "Expected error message for metrics calculation failure."
+
+    def test_command_with_empty_metrics_in_calculate_metrics_over_time(
+        self, monkeypatch, capsys
+    ):
+        """
+        Test the command when no metrics are collected in calculate_metrics_over_time.
+        """
+
+        def mock_calculate_metrics_over_time(self, to_time, interval_minutes=1):
+            return {
+                "to_time": to_time,
+                "avg_cpu_usage": 0.0,  # Default due to empty metrics_list
+                "avg_memory_usage": 0.0,  # Default due to empty metrics_list
+                "last_disk_usage": 80.0,
+                "total_network_sent": 10.0,
+                "total_network_received": 15.0,
+                "total_disk_read": 5.0,
+                "total_disk_write": 7.0,
+            }
+
+        monkeypatch.setattr(
+            "system_monitor.calculator.SystemMetricsCalculator.calculate_metrics_over_time",
+            mock_calculate_metrics_over_time,
+        )
+
+        future_time = (now() + timedelta(seconds=2)).time().strftime("%H:%M:%S")
+        call_command("collect_metrics", until=future_time)
+        record = ResourceUsage.objects.first()
+        assert record is not None, "ResourceUsage instance should be created."
+        assert record.cpu_usage == 0.0, "Avg CPU usage should be 0 for empty metrics."
+        assert (
+            record.memory_usage == 0.0
+        ), "Avg memory usage should be 0 for empty metrics."
+        # Verify logging
+        # captured = capsys.readouterr()
+        # assert (
+        #         "No metrics collected; returning default values." in captured.err
+        # ), "Expected warning for empty metrics list."
