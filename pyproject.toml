@@ -5,7 +5,7 @@ requires = [ "poetry-core>=2,<3" ]
 
 [project]
 name = "dj-system-monitor"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Django-based system monitoring tool that tracks resource usage with dashboard for visualizing system performance."
 readme = "README.md"
 keywords = [ "django", "django system monitor", "monitor", "system monitor" ]
@@ -257,7 +257,7 @@ B104 = { check_typed_list = true }
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "1.0.0"
+version = "1.0.1"
 version_files = [ "pyproject.toml" ]
 tag_format = "v$version"
 
